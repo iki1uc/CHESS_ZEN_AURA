@@ -16,7 +16,7 @@ body {
   justify-content: center;
   align-items: center;
   padding: 16px;
-  transition: background 0.8s ease, color 0.8s ease;
+  transition: background 0.8s ease;
 }
 
 .container {
@@ -43,6 +43,7 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 4px;
+  transition: all 0.8s ease;
 }
 .header .sub {
   color: #668888;
@@ -52,73 +53,52 @@ body {
 }
 .header .sub span { color: #ffaa00; }
 
-.pool-indicator {
+.color-switcher {
   display: flex;
+  gap: 6px;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 14px;
+  margin: 8px 0 14px;
   flex-wrap: wrap;
 }
-.pool-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+.color-btn {
+  padding: 4px 14px;
+  border-radius: 20px;
   border: 1px solid #2a2a3a;
-  display: inline-block;
+  background: rgba(10,10,20,0.4);
+  color: #668888;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 10px;
   transition: all 0.3s;
 }
-.pool-dot.loaded { border-color: #88ddbb; box-shadow: 0 0 12px rgba(136,221,187,0.1); }
-.pool-dot.active { border-color: #ffaa00; box-shadow: 0 0 20px rgba(255,170,0,0.15); }
-.pool-label {
-  font-size: 8px;
-  color: #445555;
-  letter-spacing: 1px;
-}
+.color-btn:hover { border-color: #88ddbb; color: #aaeedd; }
+.color-btn.active { border-color: #ffaa00; color: #ffaa00; background: rgba(255,170,0,0.05); }
+.color-btn .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:4px; vertical-align:middle; }
 
 .pool-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 14px;
 }
-@media (max-width: 700px) { .pool-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 450px) { .pool-grid { grid-template-columns: 1fr; } }
+@media (max-width:700px){.pool-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:450px){.pool-grid{grid-template-columns:1fr}}
 
 .pool-card {
   background: rgba(10,10,20,0.4);
   border: 1px solid #1a1a2a;
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-radius: 8px;
+  padding: 8px 10px;
   text-align: center;
   transition: all 0.3s;
-  cursor: pointer;
 }
-.pool-card:hover { border-color: #ffaa00; background: rgba(255,170,0,0.03); }
-.pool-card .icon { font-size: 20px; }
-.pool-card .name {
-  color: #aab;
-  font-size: 11px;
-  font-weight: bold;
-  margin: 2px 0;
-}
-.pool-card .desc {
-  color: #445555;
-  font-size: 8px;
-  letter-spacing: 1px;
-}
-.pool-card .status {
-  font-size: 8px;
-  margin-top: 4px;
-}
-.pool-card .status.loaded { color: #88ddbb; }
-.pool-card .status.missing { color: #ff4444; }
+.pool-card .icon { font-size: 18px; }
+.pool-card .name { color: #aab; font-size: 10px; font-weight: bold; }
+.pool-card .desc { color: #445555; font-size: 7px; letter-spacing: 1px; }
+.pool-card .status { font-size: 7px; margin-top: 2px; color: #88ddbb; }
 
-.main {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-@media (max-width: 750px) { .main { grid-template-columns: 1fr; } }
+.main { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width:750px){ .main { grid-template-columns: 1fr; } }
 
 .board-wrap {
   position: relative;
@@ -132,11 +112,7 @@ body {
   overflow: hidden;
   transition: border-color 0.8s ease;
 }
-#chessCanvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
+#chessCanvas { width:100%; height:100%; display:block; }
 
 .game-list {
   background: rgba(10,10,20,0.5);
@@ -146,8 +122,8 @@ body {
   max-height: 480px;
   overflow-y: auto;
 }
-.game-list::-webkit-scrollbar { width: 4px; }
-.game-list::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 2px; }
+.game-list::-webkit-scrollbar { width:4px; }
+.game-list::-webkit-scrollbar-thumb { background:#2a2a4a; border-radius:2px; }
 .game-list .item {
   display: flex;
   justify-content: space-between;
@@ -227,63 +203,34 @@ body {
 <body>
 
 <div class="container" id="container">
-
 <div class="header">
-  <h1>♟️ 6·POOLS · HISTORY CHESS</h1>
+  <h1 id="mainTitle">♟️ 6·POOLS · HISTORY CHESS</h1>
   <div class="sub">AURA · CORE · FLUX · MANA · NEXUS · ZENITH · <span>KUNSTWERK</span></div>
 </div>
 
-<div class="pool-indicator" id="poolIndicator"></div>
+<div class="color-switcher" id="colorSwitcher">
+  <button class="color-btn active" data-color="gold"><span class="dot" style="background:#ffaa00;"></span> Gold</button>
+  <button class="color-btn" data-color="green"><span class="dot" style="background:#44ff88;"></span> Grün</button>
+  <button class="color-btn" data-color="blue"><span class="dot" style="background:#4488ff;"></span> Blau</button>
+  <button class="color-btn" data-color="lila"><span class="dot" style="background:#dd88ff;"></span> Lila</button>
+  <button class="color-btn" data-color="red"><span class="dot" style="background:#ff4444;"></span> Rot</button>
+  <button class="color-btn" data-color="white"><span class="dot" style="background:#ffffff;"></span> Weiß</button>
+</div>
 
 <div class="pool-grid" id="poolGrid">
-  <div class="pool-card" data-pool="AAURA_HC_POOL">
-    <div class="icon">🎨</div>
-    <div class="name">AURA</div>
-    <div class="desc">Außen·Energie · Farben</div>
-    <div class="status missing">⏳ lädt…</div>
-  </div>
-  <div class="pool-card" data-pool="CCORE_HC_POOL">
-    <div class="icon">🌧️</div>
-    <div class="name">CORE</div>
-    <div class="desc">Innen·Kraft · Sound</div>
-    <div class="status missing">⏳ lädt…</div>
-  </div>
-  <div class="pool-card" data-pool="FFLUX_HCH_DATA">
-    <div class="icon">🌊</div>
-    <div class="name">FLUX</div>
-    <div class="desc">Bewegung · Flow</div>
-    <div class="status missing">⏳ lädt…</div>
-  </div>
-  <div class="pool-card" data-pool="MMANA_HC_SAFE">
-    <div class="icon">🎯</div>
-    <div class="name">MANA</div>
-    <div class="desc">Zentrum · Kontrolle</div>
-    <div class="status missing">⏳ lädt…</div>
-  </div>
-  <div class="pool-card" data-pool="NNEXUS_HCH_DATA">
-    <div class="icon">🔗</div>
-    <div class="name">NEXUS</div>
-    <div class="desc">Verbindung · Integration</div>
-    <div class="status missing">⏳ lädt…</div>
-  </div>
-  <div class="pool-card" data-pool="ZZENITH_HC_SAFE">
-    <div class="icon">🏔️</div>
-    <div class="name">ZENITH</div>
-    <div class="desc">Höhe · Meta</div>
-    <div class="status missing">⏳ lädt…</div>
-  </div>
+  <div class="pool-card"><div class="icon">🎨</div><div class="name">AURA</div><div class="desc">Außen·Energie</div><div class="status">● geladen</div></div>
+  <div class="pool-card"><div class="icon">🌧️</div><div class="name">CORE</div><div class="desc">Innen·Kraft</div><div class="status">● geladen</div></div>
+  <div class="pool-card"><div class="icon">🌊</div><div class="name">FLUX</div><div class="desc">Bewegung</div><div class="status">● geladen</div></div>
+  <div class="pool-card"><div class="icon">🎯</div><div class="name">MANA</div><div class="desc">Zentrum</div><div class="status">● geladen</div></div>
+  <div class="pool-card"><div class="icon">🔗</div><div class="name">NEXUS</div><div class="desc">Verbindung</div><div class="status">● geladen</div></div>
+  <div class="pool-card"><div class="icon">🏔️</div><div class="name">ZENITH</div><div class="desc">Höhe</div><div class="status">● geladen</div></div>
 </div>
 
 <div class="main">
-  <div class="board-wrap">
-    <canvas id="chessCanvas"></canvas>
-  </div>
+  <div class="board-wrap"><canvas id="chessCanvas"></canvas></div>
   <div>
     <div class="game-list" id="gameList"></div>
-    <div class="detail" id="detailPanel">
-      <span class="highlight">📜 Lade 6 Pools…</span><br>
-      Die Daten werden geladen – Kunstwerk entsteht.
-    </div>
+    <div class="detail" id="detailPanel"><span class="highlight">📜 Wähle ein Spiel</span><br>Klick auf eine Partie – die Züge werden gezeigt.</div>
     <div class="status">
       <div class="turn">Zug: <span id="turn-indicator">Weiß</span></div>
       <div class="moves">Zug <span id="move-count">0</span>/<span id="total-moves">0</span></div>
@@ -292,393 +239,18 @@ body {
       <button id="btnStep">⏭ ZUG</button>
       <button id="btnAuto">▶ AUTO</button>
       <button id="btnReset">⟲ RESET</button>
+      <button id="btnSound">🌧️ SOUND</button>
     </div>
   </div>
 </div>
 
-<div class="footer">
-  <span>♟️</span> 6·POOLS · HISTORY CHESS · <span>wieimmer4u</span>
+<div class="footer"><span>♟️</span> 6·POOLS · HISTORY CHESS · <span>wieimmer4u</span></div>
 </div>
 
-</div>
-
-<script>
-// ============================================================
-// 6·POOLS · HISTORY CHESS · LADE ALLE 6 JSONS
-// ============================================================
-
-// ===== POOL NAMES & PATHS =====
-const POOLS = {
-  AAURA_HC_POOL: { label: 'AURA', icon: '🎨', desc: 'Außen·Energie · Farben' },
-  CCORE_HC_POOL: { label: 'CORE', icon: '🌧️', desc: 'Innen·Kraft · Sound' },
-  FFLUX_HCH_DATA: { label: 'FLUX', icon: '🌊', desc: 'Bewegung · Flow' },
-  MMANA_HC_SAFE: { label: 'MANA', icon: '🎯', desc: 'Zentrum · Kontrolle' },
-  NNEXUS_HCH_DATA: { label: 'NEXUS', icon: '🔗', desc: 'Verbindung · Integration' },
-  ZZENITH_HC_SAFE: { label: 'ZENITH', icon: '🏔️', desc: 'Höhe · Meta' }
-};
-
-let loadedPools = {};
-let poolStatus = {};
-
-// ===== LADE ALLE POOLS =====
-async function loadAllPools() {
-  const poolNames = Object.keys(POOLS);
-  for (const name of poolNames) {
-    try {
-      const res = await fetch(`./${name}.json`);
-      if (res.ok) {
-        const data = await res.json();
-        loadedPools[name] = data;
-        poolStatus[name] = 'loaded';
-        updatePoolUI(name, true);
-      } else {
-        poolStatus[name] = 'missing';
-        updatePoolUI(name, false);
-        // Fallback: generiere Dummy-Daten
-        loadedPools[name] = generateFallback(name);
-        poolStatus[name] = 'loaded';
-        updatePoolUI(name, true);
-      }
-    } catch (e) {
-      poolStatus[name] = 'missing';
-      updatePoolUI(name, false);
-      loadedPools[name] = generateFallback(name);
-      poolStatus[name] = 'loaded';
-      updatePoolUI(name, true);
-    }
-  }
-  checkAllLoaded();
-}
-
-function generateFallback(name) {
-  const fallbacks = {
-    AAURA_HC_POOL: { colors: ['#ffaa00','#44ff88','#ff66ff'], mood: 'AURA' },
-    CCORE_HC_POOL: { sound: 'rain', zen: true },
-    FFLUX_HCH_DATA: { flow: ['→','↗','↘','↙','↖'], speed: 0.5 },
-    MMANA_HC_SAFE: { control: 'center', engine: 'ready' },
-    NNEXUS_HCH_DATA: { brand: 'wieimmer4u', social: 'twitter' },
-    ZZENITH_HC_SAFE: { meta: true, peak: 100 }
-  };
-  return fallbacks[name] || { status: 'fallback' };
-}
-
-function updatePoolUI(name, loaded) {
-  const cards = document.querySelectorAll('.pool-card');
-  for (const card of cards) {
-    if (card.dataset.pool === name) {
-      const statusEl = card.querySelector('.status');
-      if (loaded) {
-        statusEl.textContent = '● geladen';
-        statusEl.className = 'status loaded';
-        card.style.borderColor = 'rgba(136,221,187,0.2)';
-      } else {
-        statusEl.textContent = '⚠️ Fallback';
-        statusEl.className = 'status missing';
-        card.style.borderColor = '#2a2a3a';
-      }
-    }
-  }
-  // Indicator
-  const indicator = document.getElementById('poolIndicator');
-  let dots = '';
-  for (const [key, val] of Object.entries(poolStatus)) {
-    const cls = val === 'loaded' ? 'pool-dot loaded' : 'pool-dot';
-    dots += `<span class="${cls}" title="${key}"></span>`;
-  }
-  indicator.innerHTML = dots;
-}
-
-function checkAllLoaded() {
-  const allLoaded = Object.values(poolStatus).every(v => v === 'loaded');
-  if (allLoaded) {
-    document.getElementById('detailPanel').innerHTML = `
-      <span class="highlight">✅ Alle 6 Pools geladen!</span><br>
-      AURA · CORE · FLUX · MANA · NEXUS · ZENITH – Kunstwerk vollendet.
-    `;
-    // Farben aus AAURA übernehmen
-    if (loadedPools.AAURA_HC_POOL && loadedPools.AAURA_HC_POOL.colors) {
-      document.querySelector('.header h1').style.background =
-        `linear-gradient(90deg, ${loadedPools.AAURA_HC_POOL.colors.join(', ')})`;
-      document.querySelector('.header h1').style.webkitBackgroundClip = 'text';
-      document.querySelector('.header h1').style.webkitTextFillColor = 'transparent';
-    }
-  }
-}
-
-// ===== HISTORY CHESS ENGINE (basierend auf geladenen Pools) =====
-const canvas = document.getElementById('chessCanvas');
-const ctx = canvas.getContext('2d');
-
-function resizeCanvas() {
-  const rect = canvas.parentElement.getBoundingClientRect();
-  const size = Math.min(rect.width, rect.height, 480);
-  canvas.width = size;
-  canvas.height = size;
-  renderBoard();
-}
-window.addEventListener('resize', resizeCanvas);
-
-let boardState = [];
-let currentGame = null;
-let moveIndex = 0;
-let autoMode = false;
-let autoInterval = null;
-let selected = null;
-let allGames = [];
-let filteredGames = [];
-
-function initBoard() {
-  boardState = [];
-  const backRankW = ['♖','♘','♗','♕','♔','♗','♘','♖','♙'];
-  const backRankB = ['♜','♞','♝','♛','♚','♝','♞','♜','♟'];
-  for (let r = 0; r < 9; r++) {
-    const row = [];
-    for (let c = 0; c < 9; c++) {
-      let p = null, col = null;
-      if (r === 1) { p = '♙'; col = 'white'; }
-      else if (r === 7) { p = '♟'; col = 'black'; }
-      else if (r === 0) { p = backRankW[c]; col = 'white'; if (c === 8) { p = '♙'; col = 'white'; } }
-      else if (r === 8) { p = backRankB[c]; col = 'black'; if (c === 8) { p = '♟'; col = 'black'; } }
-      else { p = null; col = null; }
-      row.push({ piece: p, color: col });
-    }
-    boardState.push(row);
-  }
-}
-
-function applyMoveToBoard(move) {
-  const fromFile = move.from.charCodeAt(0) - 97;
-  const fromRank = 8 - parseInt(move.from[1]);
-  const toFile = move.to.charCodeAt(0) - 97;
-  const toRank = 8 - parseInt(move.to[1]);
-  if (fromRank >= 0 && fromRank < 9 && fromFile >= 0 && fromFile < 9 &&
-      toRank >= 0 && toRank < 9 && toFile >= 0 && toFile < 9) {
-    const piece = boardState[fromRank][fromFile];
-    boardState[toRank][toFile] = piece;
-    boardState[fromRank][fromFile] = { piece: null, color: null };
-  }
-}
-
-function renderBoard() {
-  const w = canvas.width;
-  const h = canvas.height;
-  const cellSize = w / 9;
-  ctx.clearRect(0, 0, w, h);
-  const grad = ctx.createRadialGradient(w/2, h/2, 10, w/2, h/2, w/2);
-  grad.addColorStop(0, '#1a1a2a');
-  grad.addColorStop(1, '#0a0a12');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, w, h);
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
-      const x = c * cellSize;
-      const y = r * cellSize;
-      const isLight = (r + c) % 2 === 0;
-      ctx.fillStyle = isLight ? 'rgba(50,70,70,0.25)' : 'rgba(20,35,35,0.25)';
-      ctx.fillRect(x, y, cellSize, cellSize);
-      ctx.strokeStyle = 'rgba(60,120,100,0.05)';
-      ctx.lineWidth = 0.5;
-      ctx.strokeRect(x, y, cellSize, cellSize);
-      const piece = boardState[r]?.[c];
-      if (piece && piece.piece) {
-        ctx.font = `${cellSize * 0.7}px 'Segoe UI', 'Arial Unicode MS', sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.shadowColor = 'rgba(100,200,180,0.05)';
-        ctx.shadowBlur = 10;
-        ctx.fillStyle = piece.color === 'white' ? '#ddeeee' : '#223333';
-        ctx.fillText(piece.piece, x + cellSize/2, y + cellSize/2 + 2);
-        ctx.shadowBlur = 0;
-      }
-    }
-  }
-  ctx.fillStyle = 'rgba(255,255,255,0.05)';
-  ctx.font = '10px monospace';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  for (let i = 0; i < 9; i++) {
-    const label = String.fromCharCode(97 + i);
-    ctx.fillText(label, i * cellSize + cellSize/2, 2);
-  }
-  ctx.textBaseline = 'bottom';
-  for (let i = 0; i < 9; i++) {
-    ctx.fillText(String(9 - i), 2, i * cellSize + cellSize/2);
-  }
-  if (selected) {
-    const [sr, sc] = selected;
-    ctx.fillStyle = 'rgba(60,180,160,0.12)';
-    ctx.fillRect(sc * cellSize, sr * cellSize, cellSize, cellSize);
-    ctx.strokeStyle = 'rgba(60,200,180,0.2)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(sc * cellSize, sr * cellSize, cellSize, cellSize);
-  }
-}
-
-// ===== GAMES AUS POOLS ODER GENERIEREN =====
-function generateGames() {
-  const games = [];
-  const names = [
-    'Die Unsterbliche', 'Die Opernpartie', 'Die Evergreen', 'Match des Jahrhunderts',
-    'Kasparov vs. Deep Blue', 'Der Schäferzug', 'Der Läufer-Coup',
-    'Die Pferde-Tour', 'Das Opfer von Anderssen', 'Die Remis-Partie'
-  ];
-  for (let i = 0; i < 100; i++) {
-    const year = 1800 + Math.floor(Math.random() * 200);
-    const name = names[i % names.length] + (i > 9 ? ` (${i+1})` : '');
-    const theme = ['pferd','laufer','schafer','opfer','remis'][i % 5];
-    const moves = [];
-    for (let j = 0; j < 12 + Math.floor(Math.random() * 20); j++) {
-      const p = ['♔','♕','♖','♗','♘','♙','♚','♛','♜','♝','♞','♟'][Math.floor(Math.random() * 12)];
-      const from = String.fromCharCode(97 + Math.floor(Math.random() * 8)) + (1 + Math.floor(Math.random() * 8));
-      const to = String.fromCharCode(97 + Math.floor(Math.random() * 8)) + (1 + Math.floor(Math.random() * 8));
-      moves.push({ piece: p, from, to, notation: `${p}${from}→${to}` });
-    }
-    const winner = ['Weiß', 'Schwarz', 'Remis'][Math.floor(Math.random() * 3)];
-    const angst = [
-      'Ein atemberaubender Angriff!', 'Ein Meisterwerk der Verteidigung!',
-      'Die Figuren tanzten über das Brett.', 'Der Schäferzug führte zum Sieg.',
-      'Ein Remis, das wie ein Sieg gefeiert wurde.'
-    ];
-    games.push({
-      id: i, name, year, theme, moves, winner,
-      angst: angst[i % angst.length],
-      emotion: ['😱🔥','🎭💎','🌿💥','❄️🔥','🤖🧠'][i % 5],
-      players: `Meister ${i+1} vs. Meister ${i+2}`
-    });
-  }
-  return games;
-}
-
-function loadGames() {
-  if (loadedPools.ZZENITH_HC_SAFE && loadedPools.ZZENITH_HC_SAFE.games) {
-    allGames = loadedPools.ZZENITH_HC_SAFE.games;
-  } else {
-    allGames = generateGames();
-  }
-  filteredGames = [...allGames];
-  renderList();
-  if (allGames.length > 0) loadGame(allGames[0]);
-}
-
-function renderList() {
-  const list = document.getElementById('gameList');
-  list.innerHTML = '';
-  filteredGames.forEach(game => {
-    const item = document.createElement('div');
-    item.className = 'item';
-    item.innerHTML = `
-      <div>
-        <div class="name">${game.name}</div>
-        <div class="year">${game.year} · ${game.players}</div>
-      </div>
-      <div class="emotion">${game.emotion}</div>
-    `;
-    item.addEventListener('click', () => loadGame(game));
-    list.appendChild(item);
-  });
-}
-
-function loadGame(game) {
-  currentGame = game;
-  moveIndex = 0;
-  initBoard();
-  selected = null;
-  document.getElementById('detailPanel').innerHTML = `
-    <span class="highlight">📜 ${game.name}</span><br>
-    ${game.year} · ${game.players}<br>
-    <span class="highlight">🏆 ${game.winner}</span><br>
-    <span style="color:#666;font-size:10px;">${game.angst}</span><br>
-    <span class="move-text">${game.moves.length} Züge</span>
-  `;
-  document.getElementById('total-moves').textContent = game.moves.length;
-  document.getElementById('move-count').textContent = '0';
-  renderBoard();
-  updateStatus();
-  if (game.moves.length > 0) setTimeout(() => nextMove(), 300);
-}
-
-function nextMove() {
-  if (!currentGame || moveIndex >= currentGame.moves.length) {
-    if (autoMode) { clearInterval(autoInterval); autoInterval = null; document.getElementById('btnAuto').textContent = '▶ AUTO'; autoMode = false; }
-    return;
-  }
-  const move = currentGame.moves[moveIndex];
-  applyMoveToBoard(move);
-  moveIndex++;
-  document.getElementById('move-count').textContent = moveIndex;
-  document.getElementById('turn-indicator').textContent = moveIndex % 2 === 0 ? 'Weiß' : 'Schwarz';
-  const detail = document.getElementById('detailPanel');
-  const moveText = move.notation || `${move.piece}${move.from}→${move.to}`;
-  detail.innerHTML = `
-    <span class="highlight">📜 ${currentGame.name}</span><br>
-    ${currentGame.year} · ${currentGame.players}<br>
-    <span class="move-text">Zug ${moveIndex}/${currentGame.moves.length}: ${moveText}</span><br>
-    <span style="color:#666;font-size:10px;">${currentGame.angst}</span>
-  `;
-  renderBoard();
-  updateStatus();
-  if (autoMode && moveIndex < currentGame.moves.length) {
-    setTimeout(nextMove, 900);
-  } else if (autoMode && moveIndex >= currentGame.moves.length) {
-    clearInterval(autoInterval);
-    autoInterval = null;
-    document.getElementById('btnAuto').textContent = '▶ AUTO';
-    autoMode = false;
-    detail.innerHTML += `<br><span style="color:#ffaa00;">🏆 PARTIE BEENDET!</span>`;
-  }
-}
-
-function updateStatus() {
-  document.getElementById('turn-indicator').textContent = moveIndex % 2 === 0 ? 'Weiß' : 'Schwarz';
-}
-
-function resetGame() {
-  if (autoMode) { clearInterval(autoInterval); autoInterval = null; document.getElementById('btnAuto').textContent = '▶ AUTO'; autoMode = false; }
-  initBoard();
-  moveIndex = 0;
-  selected = null;
-  renderBoard();
-  updateStatus();
-  document.getElementById('move-count').textContent = '0';
-  document.getElementById('detailPanel').innerHTML = `<span class="highlight">⟲ Zurückgesetzt</span>`;
-}
-
-// ===== CONTROLS =====
-document.getElementById('btnStep').addEventListener('click', nextMove);
-document.getElementById('btnAuto').addEventListener('click', function() {
-  if (autoMode) {
-    clearInterval(autoInterval);
-    autoInterval = null;
-    this.textContent = '▶ AUTO';
-    autoMode = false;
-    return;
-  }
-  if (!currentGame) { if (filteredGames.length > 0) loadGame(filteredGames[0]); else return; }
-  autoMode = true;
-  this.textContent = '⏸ STOP';
-  if (moveIndex === 0) nextMove();
-  else if (moveIndex < currentGame.moves.length) nextMove();
-  else loadGame(currentGame);
-});
-document.getElementById('btnReset').addEventListener('click', resetGame);
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === ' ' || e.key === 'ArrowRight') { e.preventDefault(); nextMove(); }
-  if (e.key === 'r' || e.key === 'R') resetGame();
-  if (e.key === 'a' || e.key === 'A') document.getElementById('btnAuto').click();
-});
-
-// ===== INIT =====
-async function init() {
-  await loadAllPools();
-  loadGames();
-  resizeCanvas();
-  setTimeout(resizeCanvas, 100);
-  console.log('♟️ 6·POOLS · HISTORY CHESS · KUNSTWERK');
-  console.log('📚 Alle 6 Pools geladen · Kunstwerk vollendet');
-}
-
-init();
-</script>
+<script src="colors.js"></script>
+<script src="sound.js"></script>
+<script src="branding.js"></script>
+<script src="games.js"></script>
+<script src="bil.js"></script>
 </body>
 </html>
